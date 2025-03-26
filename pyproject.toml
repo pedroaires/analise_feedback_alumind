@@ -1,0 +1,21 @@
+[project]
+name = "feedback-analyzer"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "pedroaires",email = "pedro.aires.cabral@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "flask (>=3.1.0,<4.0.0)",
+    "sqlalchemy (>=2.0.39,<3.0.0)",
+    "flask-sqlalchemy (>=3.1.1,<4.0.0)",
+    "python-dotenv (>=1.1.0,<2.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
