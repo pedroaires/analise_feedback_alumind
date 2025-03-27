@@ -8,16 +8,15 @@ feedback_bp = Blueprint('feedback', __name__)
 
 
 
-@feedback_bp.route('/feedback/classifica', methods=['POST'])
-def classify_feedback():
+@feedback_bp.route('/feedbacks', methods=['POST'])
+def process_feedback():
     try: 
         feedback_data = FeedbackRequestDTO.model_validate(request.json)
-        feedback = FeedbackService.perform_classification(feedback_data)
-        features = FeatureService.extract_features(feedback_data)
+        feedback, features = FeedbackService.process_feedback(feedback_data)
         feedback_resp = FeedbackResponseDTO.from_orm(feedback, features)
-
         return jsonify(feedback_resp.model_dump()), 200
     except ValidationError as e:
+        # TODO: implement error handlers
         return jsonify({
             "error": "Validation Error",
             "details": e.errors()
@@ -43,8 +42,10 @@ def list_feedbacks():
         
         # Convert to response DTOs
         resp_list = [
-            FeedbackResponseDTO.from_orm(feedback, 
-                                         FeatureService.get_features_by_feedback_id(str(feedback.id))).model_dump() 
+            FeedbackResponseDTO.from_orm(
+                feedback, 
+                FeatureService.get_features_by_feedback_id(str(feedback.id))
+            ).model_dump() 
             for feedback in feedbacks
         ]
         

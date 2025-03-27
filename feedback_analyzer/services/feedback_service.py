@@ -1,13 +1,14 @@
-from typing import List
+from typing import List, Tuple
 from sqlalchemy.exc import SQLAlchemyError
 from feedback_analyzer.models.feedback import Feedback
 from feedback_analyzer.extensions import db
 from feedback_analyzer.dtos.feedback_dto import FeedbackRequestDTO
+from feedback_analyzer.services.feature_service import FeatureService
 from sqlalchemy.sql import func
 
 class FeedbackService:
-    @staticmethod
-    def perform_classification(feedback: FeedbackRequestDTO) -> Feedback:
+    @classmethod
+    def perform_classification(cls, feedback: FeedbackRequestDTO) -> Feedback:
         classification = FeedbackService.__classify_feedback(feedback.feedback)
         new_feedback = Feedback()
         try:
@@ -24,11 +25,18 @@ class FeedbackService:
         except SQLAlchemyError as e:
             db.session.rollback()
             raise
-            
 
-    def __classify_feedback(text: str) -> str:
+    @classmethod
+    def process_feedback(cls, feedback_data):
+        feedback = cls.perform_classification(feedback_data)
+        features = FeatureService.extract_features(feedback_data)
+        return feedback, features
+            
+    @staticmethod
+    def __classify_feedback(text: str) -> Tuple[str, str]:
         return "Positivo", "Por que o mundo é bom"
     
-    @staticmethod
-    def list_feedbacks() -> List[Feedback]:
-        return db.session.query(Feedback).all()
+    @classmethod
+    def list_feedbacks(cls) -> List[Feedback]:
+        query = db.session.query(Feedback)
+        return query.order_by(Feedback.created_at.desc()).all()
