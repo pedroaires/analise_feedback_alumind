@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List, Dict
 
 class FeedbackRequestDTO(BaseModel):
     id: str
@@ -8,13 +9,14 @@ class FeedbackResponseDTO(BaseModel):
     id: str
     feedback: str
     sentiment: str
-    reason: str
+    requested_features: List[Dict]
+
 
     @classmethod
-    def from_orm(cls, feedback_obj):
+    def from_orm(cls, feedback_obj, features_objs):
         return cls(
-            id=feedback_obj.id,
+            id=str(feedback_obj.id),
             feedback=feedback_obj.text,
             sentiment=feedback_obj.sentiment,
-            reason=feedback_obj.reason
+            requested_features=[{"code": feat.code, "reason": feat.reason} for feat in features_objs]
         )
