@@ -12,8 +12,8 @@ feedback_bp = Blueprint('feedback', __name__)
 def process_feedback():
     try: 
         feedback_data = FeedbackRequestDTO.model_validate(request.json)
-        feedback, features = FeedbackService.process_feedback(feedback_data)
-        feedback_resp = FeedbackResponseDTO.from_orm(feedback, features)
+        feedback = FeedbackService.process_feedback(feedback_data)
+        feedback_resp = FeedbackResponseDTO.from_orm(feedback)
         return jsonify(feedback_resp.model_dump()), 200
     except ValidationError as e:
         # TODO: implement error handlers
@@ -38,16 +38,8 @@ def process_feedback():
 def list_feedbacks():
     try:
         # Retrieve feedbacks
-        feedbacks = FeedbackService.list_feedbacks()
-        
-        # Convert to response DTOs
-        resp_list = [
-            FeedbackResponseDTO.from_orm(
-                feedback, 
-                FeatureService.get_features_by_feedback_id(str(feedback.id))
-            ).model_dump() 
-            for feedback in feedbacks
-        ]
+        feedbacks = FeedbackService.list_feedbacks_with_features()
+        resp_list = [FeedbackResponseDTO.from_orm(f).model_dump() for f in feedbacks]
         
         return jsonify(resp_list), 200
     

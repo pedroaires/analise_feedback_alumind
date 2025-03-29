@@ -8,24 +8,15 @@ import uuid
 
 class FeatureService:
     @classmethod
-    def extract_features(cls, feedback_dto: FeedbackRequestDTO) -> List[Feature]:
-        try:
-            features = cls.__extract_features(feedback_dto.feedback)
-            created_features = []
-            for feat in features:
-                new_feat = Feature(
-                    feedback_id=feedback_dto.id,
-                    code=feat["code"],
-                    reason=feat["reason"],
-                    created_at=func.now()
-                )
-                db.session.add(new_feat)
-                created_features.append(new_feat)
-            db.session.commit()
-            return created_features
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            raise
+    def extract_features(cls, text) -> List[Feature]:
+        features = []
+        for feature in cls.__extract_features(text):
+            features.append(Feature(
+                code=feature["code"],
+                reason=feature["reason"]
+            )) 
+        return features
+            
     
     @staticmethod
     def __extract_features(text: str):

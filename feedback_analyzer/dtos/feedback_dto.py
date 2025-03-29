@@ -1,22 +1,23 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Dict
-
+from feedback_analyzer.dtos.feature_dto import FeatureDTO
+from uuid import UUID
 class FeedbackRequestDTO(BaseModel):
     id: str
     feedback: str
 
 class FeedbackResponseDTO(BaseModel):
-    id: str
+    id: UUID
     feedback: str
     sentiment: str
-    requested_features: List[Dict]
-
-
+    requested_features: List[FeatureDTO] = Field(default_factory=list)
+    
     @classmethod
-    def from_orm(cls, feedback_obj, features_objs):
+    def from_orm(cls, feedback_entity):
         return cls(
-            id=str(feedback_obj.id),
-            feedback=feedback_obj.text,
-            sentiment=feedback_obj.sentiment,
-            requested_features=[{"code": feat.code, "reason": feat.reason} for feat in features_objs]
+            id=feedback_entity.id,
+            feedback=feedback_entity.text,
+            sentiment=feedback_entity.sentiment,
+            requested_features=[FeatureDTO.from_orm(feature) for feature in feedback_entity.requested_features]
         )
+

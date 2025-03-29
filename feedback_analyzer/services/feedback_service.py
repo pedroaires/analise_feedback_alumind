@@ -7,36 +7,36 @@ from feedback_analyzer.services.feature_service import FeatureService
 from sqlalchemy.sql import func
 
 class FeedbackService:
-    @classmethod
-    def perform_classification(cls, feedback: FeedbackRequestDTO) -> Feedback:
-        classification = FeedbackService.__classify_feedback(feedback.feedback)
-        new_feedback = Feedback()
-        try:
-            new_feedback = Feedback(
-                id=feedback.id,
-                text=feedback.feedback,
-                sentiment=classification,
-                created_at=func.now()
-
-            )
-            db.session.add(new_feedback)
-            db.session.commit()
-            return new_feedback
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            raise
 
     @classmethod
     def process_feedback(cls, feedback_data):
-        feedback = cls.perform_classification(feedback_data)
-        features = FeatureService.extract_features(feedback_data)
-        return feedback, features
+        try: 
+            text = feedback_data.feedback
+            sentiment = cls.extract_sentiment(text)
+            features = FeatureService.extract_features(text)
+            
+            feedback = Feedback(
+                text=text,
+                sentiment=sentiment,
+                requested_features=features
+            )
+
+            db.session.add(feedback)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+        return feedback
             
     @staticmethod
-    def __classify_feedback(text: str) -> Tuple[str, str]:
+    def extract_sentiment(text: str) -> Tuple[str, str]:
+        # TODO: implement
         return "Positivo", "Por que o mundo é bom"
     
-    @classmethod
-    def list_feedbacks(cls) -> List[Feedback]:
+    @staticmethod
+    def list_feedbacks() -> List[Feedback]:
         query = db.session.query(Feedback)
         return query.order_by(Feedback.created_at.desc()).all()
+    
+    @staticmethod
+    def list_feedbacks_with_features():
+        return Feedback.query.options(db.joinedload(Feedback.requested_features)).all()
