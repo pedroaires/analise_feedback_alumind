@@ -2,12 +2,16 @@ import uuid
 from feedback_analyzer import create_app
 from feedback_analyzer.extensions import db
 import json
-
+import logging
 from feedback_analyzer.models.feature import Feature
 from feedback_analyzer.models.feedback import Feedback
+from feedback_analyzer.services.feedback_service import FeedbackService
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta
 
+app = create_app()
 
-def load_json_to_db(json_filepath: str):
+def populate_db(json_filepath: str):
     with app.app_context():
         with open(json_filepath, 'r', encoding='utf-8') as file:
             feedbacks_data = json.load(file)
@@ -31,14 +35,27 @@ def load_json_to_db(json_filepath: str):
             db.session.add(feedback)
 
         db.session.commit()
-        print(f"Dados carregados com sucesso do arquivo '{json_filepath}'.")
+        logging.info(f"Dados carregados com sucesso do arquivo '{json_filepath}'.")
 
 
-app = create_app()
+def send_weekly_email_job():
+    with app.app_context():
+        logging.info("Executando job semanal de envio de email.")
+        FeedbackService.send_weekly_feedback_email()
 
 if __name__ == '__main__':
     with app.app_context():
+        # para desenvolvimento apenas
         db.drop_all()
         db.create_all()
-        load_json_to_db('data/feedbacks.json')
-    app.run(debug=True)
+        populate_db('data/feedbacks.json')
+
+        scheduler = BackgroundScheduler()
+        # Toda sexta-feira as 17h 
+        scheduler.add_job(send_weekly_email_job, 'cron', day_of_week='fri', hour=17, minute=0)
+        # para testes
+        scheduler.add_job(send_weekly_email_job, 'date', run_date=datetime.now()+timedelta(seconds=5))
+
+        scheduler.start()
+        logging.info("Scheduler iniciado com sucesso")
+    app.run(debug=True, use_reloader=False)
