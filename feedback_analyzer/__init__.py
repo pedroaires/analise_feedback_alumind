@@ -13,7 +13,8 @@ def create_app():
     # Registro de blueprints
     from feedback_analyzer.routes.home import home_bp
     app.register_blueprint(home_bp)
-
+    from feedback_analyzer.routes.feedback_route import feedback_bp
+    app.register_blueprint(feedback_bp)
 
     return app
 

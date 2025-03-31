@@ -1,0 +1,82 @@
+[
+    {
+      "id": "4042f20a-45f4-4647-8050-139ac16f610b",
+      "text": "Gosto muito de usar o Alumind! Está me ajudando bastante em relação a alguns problemas que tenho. Só gostaria que houvesse uma forma mais fácil de eu mesmo realizar a edição do meu perfil dentro da minha conta.",
+      "sentiment": "POSITIVO",
+      "requested_features": [
+        {"code": "EDITAR_PERFIL", "reason": "O usuário gostaria de realizar a edição do próprio perfil."}
+      ]
+    },
+    {
+      "id": "b6f89a1b-3f8e-4f1e-ae77-36d2af6d5abc",
+      "text": "Tenho dificuldade em navegar pelas configurações, poderia ser mais intuitivo.",
+      "sentiment": "NEGATIVO",
+      "requested_features": [
+        {"code": "MELHORAR_NAVEGACAO", "reason": "O usuário acha as configurações pouco intuitivas."}
+      ]
+    },
+    {
+      "id": "a4e74f8b-774e-4c7e-99ef-89f3c9af3c8f",
+      "text": "Seria excelente se tivesse notificações por email para atualizações importantes.",
+      "sentiment": "NEUTRO",
+      "requested_features": [
+        {"code": "NOTIFICACOES_EMAIL", "reason": "O usuário deseja receber notificações por email."}
+      ]
+    },
+    {
+      "id": "7d9aeccb-d4d4-4c09-b456-9d0ec938cfb2",
+      "text": "A plataforma funciona bem, mas gostaria de mais opções para editar a minha foto.",
+      "sentiment": "POSITIVO",
+      "requested_features": [
+        {"code": "EDITAR_FOTO", "reason": "O usuário deseja mais opções para edição da foto do perfil."}
+      ]
+    },
+    {
+      "id": "2afca986-1117-4e2f-84bf-e6eced3a0fc7",
+      "text": "Queria poder excluir minha conta sem precisar entrar em contato com o suporte.",
+      "sentiment": "NEGATIVO",
+      "requested_features": [
+        {"code": "APAGAR_CONTA", "reason": "O usuário quer excluir a conta diretamente pela plataforma."}
+      ]
+    },
+    {
+      "id": "a1d7b6c9-f497-4dc2-b2e1-ff20e02d43f1",
+      "text": "Adoraria poder salvar meus artigos favoritos para ler depois.",
+      "sentiment": "POSITIVO",
+      "requested_features": [
+        {"code": "SALVAR_FAVORITOS", "reason": "O usuário deseja salvar artigos favoritos."}
+      ]
+    },
+    {
+      "id": "3e4a60e1-0d0e-4b1f-85e8-0a3c61c2e5ef",
+      "text": "A plataforma está lenta, poderiam otimizar o carregamento.",
+      "sentiment": "NEGATIVO",
+      "requested_features": [
+        {"code": "OTIMIZAR_CARREGAMENTO", "reason": "Usuário acha o carregamento lento."}
+      ]
+    },
+    {
+      "id": "4c890a64-2b29-4d79-9b39-18d48f3d3b7b",
+      "text": "Seria útil receber sugestões personalizadas de conteúdos.",
+      "sentiment": "POSITIVO",
+      "requested_features": [
+        {"code": "SUGESTOES_PERSONALIZADAS", "reason": "Usuário deseja sugestões personalizadas."}
+      ]
+    },
+    {
+      "id": "5e3177f8-5810-470a-8f4c-9a1e3a24e4a8",
+      "text": "Quero receber notificações push no meu celular.",
+      "sentiment": "NEUTRO",
+      "requested_features": [
+        {"code": "NOTIFICACOES_PUSH", "reason": "Usuário deseja notificações push."}
+      ]
+    },
+    {
+      "id": "f1a8b9d3-c2d4-4a88-9130-44786f92b7a3",
+      "text": "Gostaria de integrar minha conta com redes sociais.",
+      "sentiment": "POSITIVO",
+      "requested_features": [
+        {"code": "INTEGRAR_REDES_SOCIAIS", "reason": "Usuário deseja integração com redes sociais."}
+      ]
+    }
+  ]
