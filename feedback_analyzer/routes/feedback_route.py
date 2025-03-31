@@ -85,3 +85,16 @@ def generate_metrics():
         return jsonify({"error": "Database Error", "message": str(e)}), 500
     except Exception as e:
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+    
+# Apenas para testes
+@feedback_bp.route('/feedbacks/send-email-report', methods=['GET'])
+def send_email_report():
+    try:
+
+        email_content = FeedbackService.send_weekly_feedback_email()
+        return jsonify(email_content), 200
+
+    except SQLAlchemyError as e:
+        return jsonify({"error": "Database Error", "message": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500

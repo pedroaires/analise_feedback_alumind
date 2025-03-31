@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Tuple
 from sqlalchemy.exc import SQLAlchemyError
 from feedback_analyzer.llm.llm_service import LLMService
@@ -8,6 +8,12 @@ from feedback_analyzer.extensions import db
 from feedback_analyzer.dtos.feedback_dto import FeedbackRequestDTO
 from feedback_analyzer.services.feature_service import FeatureService
 from sqlalchemy.sql import func
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 class FeedbackService:
 
@@ -91,3 +97,42 @@ class FeedbackService:
             ]
         }
     
+    @classmethod
+    def generate_weekly_summary_email(cls):
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=7)
+
+        metrics = cls.generate_metrics(
+            start_date=start_date.isoformat(), 
+            end_date=end_date.isoformat()
+        )
+        logging.info("Generating weekly summary email content using LLM.")
+        email_body = LLMService.generate_email(metrics)
+        logging.info("Weekly summary email content generated successfully.")
+
+        return email_body
+
+
+    @classmethod
+    def send_weekly_feedback_email(cls):
+        email_content = cls.generate_weekly_summary_email()
+
+        sender = 'feedbackbot@gmail.com'
+        recipients = ['stakeholder@gmail.com']
+        subject = f'Resumo Semanal de Feedbacks - {datetime.now().strftime("%d/%m/%Y")}'
+
+        msg = MIMEMultipart()
+        msg['From'] = sender
+        msg['To'] = ', '.join(recipients)
+        msg['Subject'] = subject
+
+        msg.attach(MIMEText(email_content, 'plain', 'utf-8'))
+
+        try:
+            logging.info("Attempting to send weekly summary email.")
+            with smtplib.SMTP('localhost', 1025) as server:
+                server.sendmail(sender, recipients, msg.as_string())
+            logging.info("Weekly summary email sent successfully.")
+            return email_content
+        except Exception as e:
+            print(f"Erro ao enviar email: {e}")
