@@ -33,11 +33,11 @@ class FeedbackService:
         except SQLAlchemyError as e:
             db.session.rollback()
         return feedback
-            
-    @staticmethod
-    def extract_sentiment(text: str) -> Tuple[str, str]:
-        # TODO: implement
-        return "Positivo", "Por que o mundo é bom"
+    
+    @classmethod
+    def get_feedback_by_id(cls, feedback_id):
+        return Feedback.query.filter_by(id=feedback_id).first()
+
     
     @staticmethod
     def list_feedbacks() -> List[Feedback]:
@@ -90,3 +90,4 @@ class FeedbackService:
                 {"code": code, "count": count} for code, count in feature_counts
             ]
         }
+    

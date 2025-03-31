@@ -56,6 +56,22 @@ def list_feedbacks():
             "message": str(e)
         }), 500
     
+@feedback_bp.route('/feedbacks/<uuid:feedback_id>', methods=['GET'])
+def get_feedback(feedback_id):
+    try:
+        feedback = FeedbackService.get_feedback_by_id(feedback_id)
+        if not feedback:
+            return jsonify({"error": "Feedback not found"}), 404
+
+        feedback_resp = FeedbackResponseDTO.from_orm(feedback)
+        return jsonify(feedback_resp.model_dump()), 200
+
+    except SQLAlchemyError as e:
+        return jsonify({"error": "Database Error", "message": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+
+    
 @feedback_bp.route('/feedbacks/metrics', methods=['GET'])
 def generate_metrics():
     try:
