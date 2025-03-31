@@ -27,7 +27,6 @@ def process_feedback():
             "message": str(e)
         }), 500
     except Exception as e:
-        # Tratamento de erro genérico
         return jsonify({
             "error": "Internal Server Error",
             "message": str(e)
@@ -37,7 +36,6 @@ def process_feedback():
 @feedback_bp.route('/feedback/lista', methods=['GET'])
 def list_feedbacks():
     try:
-        # Retrieve feedbacks
         feedbacks = FeedbackService.list_feedbacks_with_features()
         resp_list = [FeedbackResponseDTO.from_orm(f).model_dump() for f in feedbacks]
         
@@ -49,7 +47,6 @@ def list_feedbacks():
             "message": str(e)
         }), 500
     except Exception as e:
-        # Tratamento de erro genérico
         return jsonify({
             "error": "Internal Server Error",
             "message": str(e)
