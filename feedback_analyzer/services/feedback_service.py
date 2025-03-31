@@ -1,5 +1,7 @@
 from typing import List, Tuple
 from sqlalchemy.exc import SQLAlchemyError
+from feedback_analyzer.llm.llm_service import LLMService
+from feedback_analyzer.models.feature import Feature
 from feedback_analyzer.models.feedback import Feedback
 from feedback_analyzer.extensions import db
 from feedback_analyzer.dtos.feedback_dto import FeedbackRequestDTO
@@ -12,13 +14,17 @@ class FeedbackService:
     def process_feedback(cls, feedback_data):
         try: 
             text = feedback_data.feedback
-            sentiment = cls.extract_sentiment(text)
-            features = FeatureService.extract_features(text)
-            
+            llm_response = LLMService.analyze_feedback(text)
+
             feedback = Feedback(
                 text=text,
-                sentiment=sentiment,
-                requested_features=features
+                sentiment=llm_response["sentiment"],
+                requested_features=[
+                    Feature(
+                        code=feat["code"], 
+                        reason=feat["reason"]
+                        ) for feat in llm_response["requested_features"]
+                ]
             )
 
             db.session.add(feedback)
