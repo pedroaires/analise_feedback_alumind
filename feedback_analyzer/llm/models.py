@@ -8,3 +8,6 @@ class FeatureRequestModel(BaseModel):
 class FeedbackAnalysisModel(BaseModel):
     sentiment: str = Field(description="Sentimento identificado no feedback: POSITIVO, NEUTRO ou NEGATIVO")
     requested_features: List[FeatureRequestModel] = Field(description="Lista de funcionalidades solicitadas pelo usuário")
+
+class SPAMdetection(BaseModel):
+    is_spam: str = Field(description="Classificação do feedback: SIM, NAO")

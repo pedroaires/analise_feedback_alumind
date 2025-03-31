@@ -25,6 +25,9 @@ def process_feedback():
             "error": "Validation Error",
             "details": e.errors()
         }), 400
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
     except SQLAlchemyError as e:
         return jsonify({
             "error": "Database Error",

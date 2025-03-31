@@ -21,6 +21,8 @@ class FeedbackService:
     def process_feedback(cls, feedback_data):
         try: 
             text = feedback_data.feedback
+            if cls.is_spam(text):
+                raise ValueError("Feedback detectado como SPAM")
             llm_response = LLMService.analyze_feedback(text)
 
             feedback = Feedback(
@@ -136,3 +138,12 @@ class FeedbackService:
             return email_content
         except Exception as e:
             print(f"Erro ao enviar email: {e}")
+
+
+    @classmethod
+    def is_spam(cls, feedback:str) -> bool:
+        llm_resp = LLMService.is_spam(feedback)["is_spam"]
+        if llm_resp == "SIM":
+            return True
+        else:
+            return False
