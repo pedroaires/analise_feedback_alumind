@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Tuple
 from sqlalchemy.exc import SQLAlchemyError
 from feedback_analyzer.llm.llm_service import LLMService
@@ -46,3 +47,46 @@ class FeedbackService:
     @staticmethod
     def list_feedbacks_with_features():
         return Feedback.query.options(db.joinedload(Feedback.requested_features)).all()
+    
+    @classmethod
+    def generate_metrics(cls, start_date=None, end_date=None):
+        query = db.session.query(Feedback)
+
+        if start_date:
+            start_date = datetime.fromisoformat(start_date)
+            query = query.filter(Feedback.created_at >= start_date)
+
+        if end_date:
+            end_date = datetime.fromisoformat(end_date)
+            query = query.filter(Feedback.created_at <= end_date)
+
+        total_feedbacks = query.count()
+
+        sentiment_counts = query.with_entities(
+            Feedback.sentiment,
+            func.count(Feedback.sentiment)
+        ).group_by(Feedback.sentiment).all()
+
+        feature_counts = db.session.query(
+            Feature.code,
+            func.count(Feature.code).label('count')
+        ).join(Feedback.requested_features)\
+         .filter(Feedback.id.in_([f.id for f in query]))\
+         .group_by(Feature.code)\
+         .order_by(func.count(Feature.code).desc())\
+         .limit(10)\
+         .all()
+
+        sentiment_data = {sentiment: count for sentiment, count in sentiment_counts}
+
+        return {
+            "total_feedbacks": total_feedbacks,
+            "sentiments": {
+                "positive": sentiment_data.get("POSITIVO", 0),
+                "neutral": sentiment_data.get("NEUTRO", 0),
+                "negative": sentiment_data.get("NEGATIVO", 0)
+            },
+            "top_features": [
+                {"code": code, "count": count} for code, count in feature_counts
+            ]
+        }

@@ -37,7 +37,7 @@ def process_feedback():
         }), 500
     
 
-@feedback_bp.route('/feedback/lista', methods=['GET'])
+@feedback_bp.route('/feedbacks', methods=['GET'])
 def list_feedbacks():
     try:
         feedbacks = FeedbackService.list_feedbacks_with_features()
@@ -56,3 +56,16 @@ def list_feedbacks():
             "message": str(e)
         }), 500
     
+@feedback_bp.route('/feedbacks/metrics', methods=['GET'])
+def generate_metrics():
+    try:
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+
+        metrics = FeedbackService.generate_metrics(start_date, end_date)
+        return jsonify(metrics), 200
+
+    except SQLAlchemyError as e:
+        return jsonify({"error": "Database Error", "message": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
