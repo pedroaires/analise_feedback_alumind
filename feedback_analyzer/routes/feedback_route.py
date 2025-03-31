@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from pydantic import ValidationError
 from feedback_analyzer.dtos.feedback_dto import FeedbackRequestDTO, FeedbackResponseDTO
 from feedback_analyzer.services.feedback_service import FeedbackService 
-from feedback_analyzer.services.feature_service import FeatureService
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -90,12 +89,12 @@ def generate_metrics():
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
     
 # Apenas para testes
-@feedback_bp.route('/feedbacks/send-email-report', methods=['GET'])
+@feedback_bp.route('/feedbacks/send-email-report', methods=['POST'])
 def send_email_report():
     try:
 
         email_content = FeedbackService.send_weekly_feedback_email()
-        return jsonify(email_content), 200
+        return jsonify({"conteudo_email": email_content}), 200
 
     except SQLAlchemyError as e:
         return jsonify({"error": "Database Error", "message": str(e)}), 500

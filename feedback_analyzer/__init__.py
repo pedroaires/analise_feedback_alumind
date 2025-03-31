@@ -16,6 +16,5 @@ def create_app():
     from feedback_analyzer.routes.feedback_route import feedback_bp
     app.register_blueprint(feedback_bp)
 
-
     return app
 

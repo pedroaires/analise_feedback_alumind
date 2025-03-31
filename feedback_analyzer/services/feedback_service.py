@@ -6,7 +6,6 @@ from feedback_analyzer.models.feature import Feature
 from feedback_analyzer.models.feedback import Feedback
 from feedback_analyzer.extensions import db
 from feedback_analyzer.dtos.feedback_dto import FeedbackRequestDTO
-from feedback_analyzer.services.feature_service import FeatureService
 from sqlalchemy.sql import func
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -26,6 +25,7 @@ class FeedbackService:
             llm_response = LLMService.analyze_feedback(text)
 
             feedback = Feedback(
+                id=feedback_data.id,
                 text=text,
                 sentiment=llm_response["sentiment"],
                 requested_features=[
